@@ -48,7 +48,7 @@ def train_titanic():
         mlflow.log_metric("recall", recall)
 
         # Log the model
-        mlflow.sklearn.log_model(model, "logistic-regression-model")
+        mlflow.sklearn.log_model(model, name="logistic-regression-model")
 
         print(f"Model trained with accuracy: {accuracy:.4f}")
         print("Run logged to MLflow UI at http://localhost:5000")
