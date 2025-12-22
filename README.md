@@ -1,41 +1,11 @@
-<h1 align="center" style="border-bottom: none">
-    <a href="https://mlflow.org/">
-        <img alt="MLflow logo" src="https://raw.githubusercontent.com/mlflow/mlflow/refs/heads/master/assets/logo.svg" width="200" />
-    </a>
-</h1>
-<h2 align="center" style="border-bottom: none">Open-Source Platform for Productionizing AI</h2>
+## Introduction
 
-MLflow is an open-source developer platform to build AI/LLM applications and models with confidence. Enhance your AI applications with end-to-end **experiment tracking**, **observability**, and **evaluations**, all in one integrated platform.
+The repository contains example workflows for [MLflow](https://github.com/mlflow/mlflow). 
+MLflow is an open-source developer platform to build AI/LLM applications and models with confidence.
 
-<div align="center">
+The remaining sections of this README provide an overview of MLflow and its features following the [MLflow documentation](https://mlflow.org/docs/latest/).
 
-[![Python SDK](https://img.shields.io/pypi/v/mlflow)](https://pypi.org/project/mlflow/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/mlflow)](https://pepy.tech/projects/mlflow)
-[![License](https://img.shields.io/github/license/mlflow/mlflow)](https://github.com/mlflow/mlflow/blob/main/LICENSE)
-<a href="https://twitter.com/intent/follow?screen_name=mlflow" target="_blank">
-<img src="https://img.shields.io/twitter/follow/mlflow?logo=X&color=%20%23f5f5f5"
-      alt="follow on X(Twitter)"></a>
-<a href="https://www.linkedin.com/company/mlflow-org/" target="_blank">
-<img src="https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff"
-      alt="follow on LinkedIn"></a>
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mlflow/mlflow)
-
-</div>
-
-<div align="center">
-   <div>
-      <a href="https://mlflow.org/"><strong>Website</strong></a> ·
-      <a href="https://mlflow.org/docs/latest"><strong>Docs</strong></a> ·
-      <a href="https://github.com/mlflow/mlflow/issues/new/choose"><strong>Feature Request</strong></a> ·
-      <a href="https://mlflow.org/blog"><strong>News</strong></a> ·
-      <a href="https://www.youtube.com/@mlflowoss"><strong>YouTube</strong></a> ·
-      <a href="https://lu.ma/mlflow?k=c"><strong>Events</strong></a>
-   </div>
-</div>
-
-<br>
-
-## 🚀 Installation
+## Installation
 
 To install the MLflow Python package, run the following command:
 
