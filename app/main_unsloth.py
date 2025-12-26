@@ -71,6 +71,9 @@ def format_prompts(examples):
 dataset = dataset.map(format_prompts, batched=True)
 
 # 5. Training
+"""
+TODO: add integration with MLFlow
+"""
 # Define trainer and train it
 trainer = SFTTrainer(
     model=model,
@@ -100,3 +103,8 @@ model.save_pretrained("lora_model_financial")
 tokenizer.save_pretrained("lora_model_financial")
 
 print("Fine-tuning complete!")
+"""
+TODO: add deployment to ollama
+"""
+
+# 7. Inference
