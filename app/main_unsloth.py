@@ -108,3 +108,20 @@ TODO: add deployment to ollama
 """
 
 # 7. Inference
+messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful assistant that can advice on financial issues",
+    },
+    {"role": "user", "content": "Give a good financial advice to a university student"},
+]
+inputs = tokenizer.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    return_tensors="pt",
+    return_dict=True,
+    reasoning_effort="medium",
+).to("cuda")
+from transformers import TextStreamer
+
+_ = model.generate(**inputs, max_new_tokens=64, streamer=TextStreamer(tokenizer))
