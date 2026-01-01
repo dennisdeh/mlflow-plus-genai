@@ -1,0 +1,16 @@
+endpoints:
+  - name: gpt-oss-chat
+    endpoint_type: llm/v1/chat
+    model:
+      provider: ollama
+      name: gpt-oss:20b
+      config:
+        ollama_base_url: "http://localhost:11434"
+
+  - name: deepseek-chat
+    endpoint_type: llm/v1/chat
+    model:
+      provider: ollama
+      name: deepseek-r1:32b
+      config:
+        ollama_base_url: "http://localhost:11434"

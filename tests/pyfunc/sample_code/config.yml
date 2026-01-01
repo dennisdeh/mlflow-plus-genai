@@ -1,3 +1,0 @@
-use_gpu: True
-temperature: 0.9
-timeout: 300
