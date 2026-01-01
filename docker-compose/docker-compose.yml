@@ -88,7 +88,8 @@ services:
           --backend-store-uri "${MLFLOW_BACKEND_STORE_URI}" \
           --artifacts-destination "${MLFLOW_ARTIFACTS_DESTINATION}" \
           --host "${MLFLOW_HOST}" \
-          --port "${MLFLOW_PORT}"
+          --port "${MLFLOW_PORT}" \
+          --allowed-hosts localhost,127.0.0.1,https://mlflow.dennismarie.eu/,mlflow.dennismarie.eu
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     healthcheck:
