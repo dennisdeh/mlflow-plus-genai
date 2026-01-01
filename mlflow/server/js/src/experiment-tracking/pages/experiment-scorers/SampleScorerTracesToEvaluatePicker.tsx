@@ -7,27 +7,33 @@ import {
 
 import { ChevronDownIcon, DialogCombobox, DialogComboboxCustomButtonTriggerWrapper } from '@databricks/design-system';
 import { defineMessage, FormattedMessage } from 'react-intl';
+import { EvaluateTracesParams } from './types';
 import { isEmpty } from 'lodash';
 import { useMemo, useState } from 'react';
 import { coerceToEnum } from '../../../shared/web-shared/utils';
+import { SelectTracesModal } from '../../components/SelectTracesModal';
+import { ScorerFormData } from './utils/scorerTransformUtils';
+import { useFormContext } from 'react-hook-form';
+import { ScorerEvaluationScope } from './constants';
+import { SelectSessionsModal } from '../../components/SelectSessionsModal';
 
 enum PickerOption {
-  'LAST_TRACE' = '1',
-  'LAST_5_TRACES' = '5',
-  'LAST_10_TRACES' = '10',
+  'LAST_TRACE_OR_SESSION' = '1',
+  'LAST_5_TRACES_OR_SESSIONS' = '5',
+  'LAST_10_TRACES_OR_SESSIONS' = '10',
   'CUSTOM' = 'custom',
 }
 
-const PickerOptionsLabels = {
-  [PickerOption.LAST_TRACE]: defineMessage({
+const PickerOptionsLabelsForTraces = {
+  [PickerOption.LAST_TRACE_OR_SESSION]: defineMessage({
     defaultMessage: 'Last trace',
     description: 'Option for last trace',
   }),
-  [PickerOption.LAST_5_TRACES]: defineMessage({
+  [PickerOption.LAST_5_TRACES_OR_SESSIONS]: defineMessage({
     defaultMessage: 'Last 5 traces',
     description: 'Option for last 5 traces',
   }),
-  [PickerOption.LAST_10_TRACES]: defineMessage({
+  [PickerOption.LAST_10_TRACES_OR_SESSIONS]: defineMessage({
     defaultMessage: 'Last 10 traces',
     description: 'Option for last 10 traces',
   }),
@@ -37,27 +43,53 @@ const PickerOptionsLabels = {
   }),
 };
 
+const PickerOptionsLabelsForSessions = {
+  [PickerOption.LAST_TRACE_OR_SESSION]: defineMessage({
+    defaultMessage: 'Last session',
+    description: 'Option for last session',
+  }),
+  [PickerOption.LAST_5_TRACES_OR_SESSIONS]: defineMessage({
+    defaultMessage: 'Last 5 sessions',
+    description: 'Option for last 5 sessions',
+  }),
+  [PickerOption.LAST_10_TRACES_OR_SESSIONS]: defineMessage({
+    defaultMessage: 'Last 10 sessions',
+    description: 'Option for last 10 sessions',
+  }),
+  [PickerOption.CUSTOM]: defineMessage({
+    defaultMessage: 'Select sessions',
+    description: 'Option for selecting custom traces',
+  }),
+};
+
 export const SampleScorerTracesToEvaluatePicker = ({
-  onTracesToEvaluateChange,
-  tracesToEvaluate,
+  onItemsToEvaluateChange,
+  itemsToEvaluate,
 }: {
-  tracesToEvaluate: { traceCount: number; traceIds?: string[] };
-  onTracesToEvaluateChange: (tracesToEvaluate: { traceCount: number; traceIds?: string[] }) => void;
+  itemsToEvaluate: Pick<EvaluateTracesParams, 'itemCount' | 'itemIds'>;
+  onItemsToEvaluateChange: (itemsToEvaluate: Pick<EvaluateTracesParams, 'itemCount' | 'itemIds'>) => void;
 }) => {
+  const { watch } = useFormContext<ScorerFormData>();
+
+  const evaluationScope = coerceToEnum(ScorerEvaluationScope, watch('evaluationScope'), ScorerEvaluationScope.TRACES);
+
+  const PickerOptionsLabels =
+    evaluationScope === ScorerEvaluationScope.TRACES ? PickerOptionsLabelsForTraces : PickerOptionsLabelsForSessions;
+
   const [displayPickCustomTracesModal, setDisplayPickCustomTracesModal] = useState(false);
-  const tracesToEvaluateDropdownValue = useMemo(() => {
-    if (!isEmpty(tracesToEvaluate.traceIds)) {
+  const itemsToEvaluateDropdownValue = useMemo(() => {
+    if (!isEmpty(itemsToEvaluate.itemIds)) {
       return PickerOption.CUSTOM;
     }
-    return coerceToEnum(PickerOption, String(tracesToEvaluate.traceCount), PickerOption.LAST_10_TRACES);
-  }, [tracesToEvaluate]);
+    return coerceToEnum(PickerOption, String(itemsToEvaluate.itemCount), PickerOption.LAST_10_TRACES_OR_SESSIONS);
+  }, [itemsToEvaluate]);
 
   return (
     <>
       <DialogCombobox
         componentId="mlflow.experiment-scorers.form.traces-picker"
-        id="TODO"
-        value={[tracesToEvaluateDropdownValue]}
+        id="mlflow.experiment-scorers.form.traces-picker"
+        value={[itemsToEvaluateDropdownValue]}
       >
         <DialogComboboxCustomButtonTriggerWrapper>
           <Button
@@ -65,37 +97,83 @@ export const SampleScorerTracesToEvaluatePicker = ({
             size="small"
             endIcon={<ChevronDownIcon />}
           >
-            {tracesToEvaluateDropdownValue === PickerOption.CUSTOM ? (
-              <FormattedMessage
-                defaultMessage="{count, plural, one {1 trace selected} other {# traces selected}}"
-                description="Label for the number of traces selected"
-                values={{ count: tracesToEvaluate.traceIds?.length }}
-              />
+            {itemsToEvaluateDropdownValue === PickerOption.CUSTOM ? (
+              evaluationScope === ScorerEvaluationScope.TRACES ? (
+                <FormattedMessage
+                  defaultMessage="{count, plural, one {1 trace selected} other {# traces selected}}"
+                  description="Label for the number of traces selected"
+                  values={{ count: itemsToEvaluate.itemIds?.length }}
+                />
+              ) : (
+                <FormattedMessage
+                  defaultMessage="{count, plural, one {1 session selected} other {# sessions selected}}"
+                  description="Label for the number of sessions selected"
+                  values={{ count: itemsToEvaluate.itemIds?.length }}
+                />
+              )
             ) : (
-              <FormattedMessage {...PickerOptionsLabels[tracesToEvaluateDropdownValue]} />
+              <FormattedMessage {...PickerOptionsLabels[itemsToEvaluateDropdownValue]} />
             )}
           </Button>
         </DialogComboboxCustomButtonTriggerWrapper>
         <DialogComboboxContent align="end">
           <DialogComboboxOptionList>
-            {[PickerOption.LAST_TRACE, PickerOption.LAST_5_TRACES, PickerOption.LAST_10_TRACES].map((value) => (
+            {[
+              PickerOption.LAST_TRACE_OR_SESSION,
+              PickerOption.LAST_5_TRACES_OR_SESSIONS,
+              PickerOption.LAST_10_TRACES_OR_SESSIONS,
+            ].map((value) => (
               <DialogComboboxOptionListSelectItem
                 value={value}
-                checked={tracesToEvaluateDropdownValue === value}
+                checked={itemsToEvaluateDropdownValue === value}
                 onChange={() => {
-                  onTracesToEvaluateChange({ traceCount: Number(value), traceIds: undefined });
+                  onItemsToEvaluateChange({ itemCount: Number(value), itemIds: undefined });
                 }}
               >
                 <FormattedMessage {...PickerOptionsLabels[value]} />
               </DialogComboboxOptionListSelectItem>
             ))}
-            {/* TODO(next PRs): Add custom trace selection option */}
+            <DialogComboboxOptionListSelectItem
+              value={PickerOption.CUSTOM}
+              checked={itemsToEvaluateDropdownValue === PickerOption.CUSTOM}
+              onChange={() => {
+                setDisplayPickCustomTracesModal(true);
+              }}
+            >
+              <FormattedMessage {...PickerOptionsLabels[PickerOption.CUSTOM]} />
+            </DialogComboboxOptionListSelectItem>
           </DialogComboboxOptionList>
         </DialogComboboxContent>
       </DialogCombobox>
-      {displayPickCustomTracesModal && (
-        // TODO(next PRs): Add custom trace selection modal
-        <div />
+      {displayPickCustomTracesModal && evaluationScope === ScorerEvaluationScope.TRACES && (
+        <SelectTracesModal
+          onClose={() => {
+            onItemsToEvaluateChange({ ...itemsToEvaluate });
+            setDisplayPickCustomTracesModal(false);
+          }}
+          onSuccess={(traceIds) => {
+            if (!isEmpty(traceIds)) {
+              onItemsToEvaluateChange({ itemCount: undefined, itemIds: traceIds });
+            }
+            setDisplayPickCustomTracesModal(false);
+          }}
+          initialTraceIdsSelected={itemsToEvaluate.itemIds}
+        />
+      )}
+      {displayPickCustomTracesModal && evaluationScope === ScorerEvaluationScope.SESSIONS && (
+        <SelectSessionsModal
+          onClose={() => {
+            onItemsToEvaluateChange({ ...itemsToEvaluate });
+            setDisplayPickCustomTracesModal(false);
+          }}
+          onSuccess={(traceIds) => {
+            if (!isEmpty(traceIds)) {
+              onItemsToEvaluateChange({ itemCount: undefined, itemIds: traceIds });
+            }
+            setDisplayPickCustomTracesModal(false);
+          }}
+          initialSessionIdsSelected={itemsToEvaluate.itemIds}
+        />
       )}
     </>
   );
