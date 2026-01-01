@@ -137,3 +137,9 @@ gunicorn.conf.py
 !.claude/skills/
 !.claude/hooks/
 !.claude/settings.json
+/workflows/unsloth_example/gguf_model/
+/workflows/unsloth_example/llama.cpp/
+/workflows/unsloth_example/outputs/
+/workflows/unsloth_example/unsloth_compiled_cache/
+/workflows/unsloth_example/phi-3-mini-4k-instruct.Q4_K_M.gguf
+/workflows/unsloth_example/Modelfile
