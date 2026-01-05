@@ -5,7 +5,7 @@ from mlflow.entities import SpanType
 
 # Configure MLflow to point to your Docker container
 mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_experiment("Ollama-Tracing-Workflow")
+mlflow.set_experiment("Ollama-Workflow")
 
 
 class OllamaProvider:
@@ -18,11 +18,7 @@ class OllamaProvider:
         """
         Sends a chat request to Ollama and traces the execution in MLflow.
         """
-        payload = {
-            "model": self.model_name,
-            "messages": messages,
-            "stream": False
-        }
+        payload = {"model": self.model_name, "messages": messages, "stream": False}
 
         # MLflow will automatically capture the inputs and outputs of this function
         # because of the @mlflow.trace decorator.
@@ -39,7 +35,7 @@ def run_workflow():
     with mlflow.start_run(run_name="Ollama_Diagnostic_Session"):
         queries = [
             "Explain the concept of 'tracing' in observability.",
-            "How does MLflow help in LLM development?"
+            "How does MLflow help in LLM development?",
         ]
 
         for query in queries:
