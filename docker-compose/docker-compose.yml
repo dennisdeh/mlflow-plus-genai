@@ -6,6 +6,7 @@ services:
   postgres:
     image: postgres:15
     container_name: mlflow-postgres
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -23,6 +24,7 @@ services:
   minio:
     image: minio/minio:latest
     container_name: mlflow-minio
+    restart: always
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -56,6 +58,7 @@ services:
   mlflow:
     image: ghcr.io/mlflow/mlflow:${MLFLOW_VERSION}
     container_name: mlflow-server
+    restart: always
     depends_on:
       postgres:
         condition: service_healthy
@@ -67,6 +70,7 @@ services:
       # Backend store URI built from vars
       MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
       MLFLOW_ALLOW_HTTP_1_1_UPDATE: "true"
+      MLFLOW_SERVER_CORS_ALLOWED_ORIGINS: ${MLFLOW_SERVER_CORS_ALLOWED_ORIGINS}
 
       # S3/MinIO settings
       MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL}
