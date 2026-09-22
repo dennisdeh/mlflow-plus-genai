@@ -3,13 +3,6 @@ import requests
 import json
 from mlflow.entities import SpanType
 
-# Configure MLflow to point to your Docker container
-mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_experiment("Ollama-Workflow")
-
-# Enable MLflow autologging for tracing and environment tracking
-mlflow.autolog()
-
 
 class OllamaProvider:
     def __init__(self, model_name="llama3", base_url="http://localhost:11434"):
@@ -50,4 +43,9 @@ def run_workflow():
 
 
 if __name__ == "__main__":
+    # Configure MLflow to point to your Docker container
+    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_experiment("Ollama-Workflow")
+    # Enable MLflow autologging for tracing and environment tracking
+    mlflow.autolog()
     run_workflow()
